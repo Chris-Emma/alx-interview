@@ -15,30 +15,31 @@ const fetchData = (url) => {
   return new Promise((resolve, reject) => {
     request(url, (error, response, body) => {
       if (error) {
-        reject(error);
+        reject(error); // Reject the promise if there's an error
       } else if (response.statusCode !== 200) {
         reject(
           new Error(`Failed to load data, status code: ${response.statusCode}`)
-        );
+        ); // Reject the promise if the response status code is not 200
       } else {
-        resolve(JSON.parse(body));
+        resolve(JSON.parse(body)); // Resolve the promise with the parsed JSON data
       }
     });
   });
 };
 
+// Fetch movie data and display character names
 fetchData(apiUrl)
   .then((movieData) => {
     const characterPromises = movieData.characters.map(
-      (characterUrl) => fetchData(characterUrl)
+      (characterUrl) => fetchData(characterUrl) // Create an array of promises to fetch character data
     );
-    return Promise.all(characterPromises);
+    return Promise.all(characterPromises); // Wait for all promises to resolve
   })
   .then((characters) => {
     characters.forEach((character) => {
-      console.log(character.name);
+      console.log(character.name); // Print the name of each character
     });
   })
   .catch((error) => {
-    console.log('Error:', error.message);
+    console.log('Error:', error.message); // Handle any errors that occur during the process
   });
